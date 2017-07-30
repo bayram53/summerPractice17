@@ -25,7 +25,7 @@ int main(int argc, char **argv){
     // we will need PlanningSceneInterface object to handle collision checking,
     // we will add collision objects to this scene and hope that MoveIt! controller
     // will find a path as specified.
-    moveit::planning_interface::MoveGroup group("manipulator");
+    moveit::planning_interface::MoveGroup group("endeffector");
     moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
     sleep(3.0);

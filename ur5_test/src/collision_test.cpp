@@ -58,8 +58,8 @@ int main(int argc, char **argv){
     // A pose for the box (specified relative to frame_id)
     geometry_msgs::Pose box_pose;
     box_pose.orientation.w = 0.0;
-    box_pose.position.x =  0.8;
-    box_pose.position.y = 0.8;
+    box_pose.position.x =  0.40;
+    box_pose.position.y = 0.40;
     box_pose.position.z =  0.0;
 
     // it seems like we add our box to our collision object...
@@ -95,8 +95,8 @@ int main(int argc, char **argv){
     // A pose for the box (specified relative to frame_id).
     geometry_msgs::Pose box_pose_2;
     box_pose_2.orientation.w = 0.0;
-    box_pose_2.position.x =  -0.8;
-    box_pose_2.position.y = -0.8;
+    box_pose_2.position.x =  -0.40;
+    box_pose_2.position.y = -0.40;
     box_pose_2.position.z = 0.0;
 
     // it seems like we add our box to our collision object...
@@ -132,8 +132,8 @@ int main(int argc, char **argv){
     // A pose for the box (specified relative to frame_id).
     geometry_msgs::Pose box_pose_3;
     box_pose_3.orientation.w = 0.0;
-    box_pose_3.position.x =  -0.80;
-    box_pose_3.position.y = 0.80;
+    box_pose_3.position.x =  -0.40;
+    box_pose_3.position.y = 0.40;
     box_pose_3.position.z = 0.0;
 
     // it seems like we add our box to our collision object...
@@ -170,8 +170,8 @@ int main(int argc, char **argv){
     geometry_msgs::Pose box_pose_4;
 
     box_pose_4.orientation.w = 0.0;
-    box_pose_4.position.x =  0.80;
-    box_pose_4.position.y = -0.80;
+    box_pose_4.position.x =  0.40;
+    box_pose_4.position.y = -0.40;
     box_pose_4.position.z = 0.00;
 
     // it seems like we add our box to our collision object...

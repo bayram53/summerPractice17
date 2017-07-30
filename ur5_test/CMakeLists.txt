@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_ros_planning_interface
   pluginlib
   roscpp
+  rospy
   std_msgs
 )
 
@@ -144,6 +145,7 @@ include_directories(
 add_executable(add_collision_objct src/add_collision_objct.cpp)
 add_executable(moveit_example src/moveit_example_node.cpp)
 add_executable(collision_test src/collision_test.cpp)
+add_executable(pick_test_2 src/pick_test_2.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -159,6 +161,8 @@ add_dependencies(moveit_example
 ur5_test_generate_messages_cpp)
 add_dependencies(collision_test
 ur5_test_generate_messages_cpp)
+add_dependencies(pick_test_2
+ur5_test_generate_messages_cpp)
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
@@ -168,6 +172,8 @@ ${catkin_LIBRARIES} )
 target_link_libraries(moveit_example
 ${catkin_LIBRARIES} )
 target_link_libraries(collision_test
+${catkin_LIBRARIES} )
+target_link_libraries(pick_test_2
 ${catkin_LIBRARIES} )
 #############
 ## Install ##
