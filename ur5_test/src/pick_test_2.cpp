@@ -64,7 +64,7 @@ int main(int argc, char **argv){
     box_pose.position.z = 0.005;
 
     // it seems like we add our box to our collision object...
-    collision_object.primitives.push_back(primitive);
+  /*  collision_object.primitives.push_back(primitive);
     collision_object.primitive_poses.push_back(box_pose);
     collision_object.operation = collision_object.ADD;
 
@@ -72,7 +72,7 @@ int main(int argc, char **argv){
     collision_objects.push_back(collision_object);
 
     planning_scene_interface.addCollisionObjects(collision_objects);
-   
+   */
     group.setPlanningTime(20.0);
 
     // we create a new pose object
@@ -80,13 +80,13 @@ int main(int argc, char **argv){
 
     // we set orientations for our pose
     // notice that we use quaternions
-   /* target_pose1.orientation.x = -0.500077;
-    target_pose1.orientation.y = -0.499931;
-    target_pose1.orientation.z = -0.499984;
-    target_pose1.orientation.w =  0.500008;*/
+    target_pose1.orientation.x = box_pose.orientation.x;
+    target_pose1.orientation.y = box_pose.orientation.y;
+    target_pose1.orientation.z = box_pose.orientation.z;
+    target_pose1.orientation.w = box_pose.orientation.w;
 
     // we set positions for our pose
-    target_pose1.position.x= box_pose.position.x;
+    target_pose1.position.x = box_pose.position.x;
     target_pose1.position.y = box_pose.position.y;
     target_pose1.position.z = box_pose.position.z;
   // we set our pose as a target pose for our arm
