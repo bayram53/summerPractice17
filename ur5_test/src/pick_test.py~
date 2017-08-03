@@ -185,7 +185,7 @@ Scene       : Planning Scene Interface Object (current scene)
 def pick_object(group,part_index,robot,scene):
 
     pos = copy.deepcopy(target_poses[part_index])
-    pos.pose.position.z += 0.20
+    pos.pose.position.z += 0.22
     pos.pose.orientation.y = 1
     group.set_pose_target(pos)
     """
@@ -259,7 +259,7 @@ if __name__=='__main__':
     #Create environment
     create_environment(scene,robot)
     #Create target objects
-    target_poses = check_targets(robot,scene,3,0.15)
+    target_poses = check_targets(robot,scene,3,0.10)
     rospy.sleep(1)
     # Try 35 times to plan motion for each object -- to ensure it cannot be planned, number can be increased--
     for j in xrange(35):

@@ -185,7 +185,7 @@ Scene       : Planning Scene Interface Object (current scene)
 def pick_object(group,part_index,robot,scene):
 
     pos = copy.deepcopy(target_poses[part_index])
-    pos.pose.position.z += 0.20
+    pos.pose.position.z += 0.22
     pos.pose.orientation.y = 1
     group.set_pose_target(pos)
     """
@@ -237,6 +237,7 @@ Scene       : Planning Scene Interface Object (current scene)
 def create_environment(scene,robot):	
     
     add_object(name="wall",x=0.0,y=0.8,z=0.5,robot=robot,scene=scene,d1=0.0001,d2=0.35,d3=1,typ=0)
+    add_object(name="wall_2",x=0.0,y=-0.8,z=0.5,robot=robot,scene=scene,d1=0.0001,d2=0.35,d3=1,typ=0)
     add_object(name="table",x=0.0,y=0.0,z=-0.05,robot=robot,scene=scene,d1=2,d2=2,d3=0.0001,typ=0)
     #add_object(name="table2",x=0.0,y=0.0,z=0.8,robot=robot,scene=scene,d1=2,d2=2,d3=0.0001,typ=0)
      
