@@ -42,7 +42,7 @@ Number      : Number of collision objects required to spawn
 Distance    : Required minimum distance between each collision objects
 """
 def check_targets(robot,scene,number,distance):
-    rospy.rosinfo("Creating Boxes!")
+    print "Start Check"
     def al(type):
 	if type == 'x':
 	    return random.uniform(0.35,0.65)
@@ -91,15 +91,14 @@ Definition: Clears all non-attached objects from planning scene
 Scene: PlanningSceneInterface Object (current scene)
 """	
 def clean_scene(scene):
-    rospy.rosinfo("Clearing the Scene")
     scene.remove_world_object()	
 def default_state_gripper(grp):
-    rospy.rosinfo("Openning Gripper")
     joint_vals = grp.get_current_joint_values()
-    joint_vals[0] = 0.0
-    grp.set_joint_value_target(joint_vals)
-    init_plan = grp.plan()
-    return grp.execute(init_plan)
+    if(len(joint_vals) >= 1):
+	    joint_vals[0] = 0.0
+	    grp.set_joint_value_target(joint_vals)
+	    init_plan = grp.plan()
+	    return grp.execute(init_plan)
 """
 ----------------Function Name: closed_state_gripper----------------
 Definition   : Function that opens gripper and detachs the gripped object
@@ -107,7 +106,6 @@ Robot        : Robot Commander Object
 Obj          : Name of the Object that is needed to detach
 """
 def closed_state_gripper(robot, obj):
-    rospy.rosinfo("Closing Gripper")
     def convert(width):
         return 0.77 - width / 0.15316 * 0.77
     width = scene.get_objects([obj])[obj].primitives[0].dimensions[0]
@@ -129,6 +127,7 @@ def closed_state_gripper(robot, obj):
 
 """
 ----------------Function Name: create_pose----------------
+Description   : To create a pose object easily. Can be used to divide add_object function if needed.
 (x,y,z)       : Position Attributes of Pose Message
 (xo,yo,zo,wo) : Orientation Attributes of Pose Message (Default Value: 0)
 """
@@ -145,12 +144,14 @@ def create_pose(x,y,z,xo=0.0,yo=0.0,zo=0.0,wo=0.0):
 	return pos
 """
 ----------------Function Name: create_dimensions----------------
+Definition    : To create a dimension tuple easily. Can be used to divide add_object function if needed.
 (d1,d2,d3)    : Dimensions of the object  (Default Value: 0.1)
 """
 def create_dimensions(d1=0.1,d2=0.1,d3=0.1):
 	return (d1,d2,d3)
 """     
 ----------------Function Name: add_object----------------
+Description   : Adds an defined object to the given pose with given dimensions
 Name          : Object Name
 Pose	      : Pose of the Object (x,y,z,xo,yo,zo,wo)
 Dimension     : Dimensions of the Obhect (Tuple) (d1,d2,d3)
@@ -158,7 +159,7 @@ Type          : Box(0),Sphere(1)
 Robot         : Robot Commander Object
 Scene	      : Planning Scene Interface Object(current scene)
 
-	d1 is radius for sphere i.e typ==1,
+!!!!!!!	d1 is radius for sphere i.e typ==1  !!!!!!!!!
 """
 def add_object(name,x,y,z,robot,scene,xo=0.0,yo=0.0,zo=0.0,wo=0.0,d1=0.1,d2=0.1,d3=0.1,typ=0):
 	pos = PoseStamped()
@@ -186,25 +187,22 @@ Robot       : Robot Commander Object
 Scene       : Planning Scene Interface Object (current scene)
 """
 def pick_object(group,part_index,robot,scene):
-    rospy.rosinfo("Pick Operation starts!")
+
     pos = copy.deepcopy(target_poses[part_index])
-    pos.pose.position.z += 0.22
+    pos.pose.position.z += 0.12
     pos.pose.orientation.y = 1
     group.set_pose_target(pos)
-    """
-    pl = group.plan()
-    state =group.execute(pl)
-    """
-    move_plan = group.plan()
-    state = group.execute(move_plan)
-    rospy.rosinfo("Execute operation for Object is %s"%str(part_index))
+    state =group.go()
+    print "Picking execution for Part_"+str(part_index)+":" + str(state)
     if(state):
-        closed_state_gripper(robot,"part"+str(part_index))
+	#Without gripper version :
+	robot.manipulator.attach_object("part"+str(part_index))
+        #closed_state_gripper(robot,"part"+str(part_index))
 	rospy.sleep(1.0)
 	place_object(group,part_index,robot,scene)
 	return
     else:
-	
+	print "Failed to execute picking trajectory"
 	return
 """
 ----------------Function Name:  pick_object----------------
@@ -222,18 +220,14 @@ def place_object(group,part_index,robot,scene):
         pos.pose.position.z = 0.26
 	pos.pose.orientation.y =1.0
 	group.set_pose_target(pos)
-	move_plan = group.plan()
-        state = group.execute(move_plan)
+	state = group.go()
 	if(state):
 		detached= group.detach_object("part"+str(part_index))
 		rospy.sleep(1.5)
 		if(detached):
-			default_state_gripper(robot.endeffector)
-			rospy.sleep(2)
 			picked.append(part_index)
 			scene.remove_world_object("part"+str(part_index))
 	else:
-		default_state_gripper(robot.endeffector)
 		group.detach_object("part"+str(part_index))
 		
 """
@@ -244,8 +238,8 @@ Scene       : Planning Scene Interface Object (current scene)
 """ 	
 def create_environment(scene,robot):	
     
-    add_object(name="wall",x=0.0,y=0.8,z=0.5,robot=robot,scene=scene,d1=0.1,d2=0.35,d3=1,typ=0)
-    add_object(name="wall_2",x=0.0,y=-0.8,z=0.5,robot=robot,scene=scene,d1=0.1,d2=0.35,d3=1,typ=0)
+    add_object(name="wall",x=0.0,y=0.8,z=0.5,robot=robot,scene=scene,d1=0.01,d2=0.35,d3=1,typ=0)
+    add_object(name="wall_2",x=0.0,y=-0.8,z=0.5,robot=robot,scene=scene,d1=0.01,d2=0.35,d3=1,typ=0)
     add_object(name="table",x=0.0,y=0.0,z=-0.05,robot=robot,scene=scene,d1=2,d2=2,d3=0.0001,typ=0)
     #add_object(name="table2",x=0.0,y=0.0,z=0.8,robot=robot,scene=scene,d1=2,d2=2,d3=0.0001,typ=0)
      
@@ -256,11 +250,11 @@ if __name__=='__main__':
     scene = PlanningSceneInterface()
     robot = RobotCommander()
     arm =  MoveGroupCommander("manipulator")
-    eef = MoveGroupCommander("endeffector")
+    #eef = MoveGroupCommander("endeffector")
     rospy.sleep(1)
 
     #Reset State of the Gripper 
-    default_state_gripper(eef) 
+    #default_state_gripper(eef) 
     #Reset the position of the Arm
     # Will be implemented if needed
     #Clean the scene
@@ -268,38 +262,15 @@ if __name__=='__main__':
     #Create environment
     create_environment(scene,robot)
     #Create target objects
-    
-    target_poses = check_targets(robot,scene,3,0.10)  
-    """
-    target_poses.append(add_object(name="part0",x=0.523427168532,y=0.450996014748,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    target_poses.append(add_object(name="part1",x=0.37863823767,y=0.323992942845,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    target_poses.append(add_object(name="part2",x=0.627323786056,y=-0.232866048374,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    """
-    """
-    target_poses.append(add_object(name="part0",x=0.605268654986,y=0.23264250667,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    target_poses.append(add_object(name="part1",x=0.503392917607,y=0.465848992641,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    target_poses.append(add_object(name="part2",x=0.394430959068,y=-0.104107965218,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    """
-    """
-    target_poses.append(add_object(name="part0",x=0.645338374002,y=-0.073414667672,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    target_poses.append(add_object(name="part1",x=0.368566960491,y=0.494131345785,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    target_poses.append(add_object(name="part2",x=0.542541262891,y=0.111709389047,z=0.05,robot=robot,scene=scene,d1=0.1,d2=0.1,d3=0.1,typ=0))
-    """
+    target_poses = check_targets(robot,scene,3,0.10)
     rospy.sleep(1)
-    # Try until all objects placed--
-    
-    j = 1	
-    
-    while(len(picked) != len(target_poses)):
-	    rospy.rosinfo("Try: " + str(j))
-	    arm.set_planning_time(5.0)
-            #arm.allow_replanning(True)
-	    arm.set_num_planning_attempts(1)
-	    #Pick and place every object
-	    for i in xrange(len(target_poses)):
-		if i not in picked:
-		    pick_object(group=arm, part_index = i,robot = robot,scene=scene)
-	    j=j+1
-    
-    rospy.spin()
+    # Try 35 times to plan motion for each object -- to ensure it cannot be planned, number can be increased--
+    for j in xrange(35):
+	print  "Try : " +str(j+1)
+	#Pick and place every object
+    	for i in xrange(len(target_poses)):
+            if i not in picked:
+	    	pick_object(group=arm, part_index = i,robot = robot,scene=scene)
+    if(j < 35):
+        rospy.spin()
 roscpp_shutdown()

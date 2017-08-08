@@ -10,3 +10,6 @@ controller_list:
   - name: fake_endeffector_controller
     joints:
       - finger_joint
+  - name: fake_endeffector_remain_controller
+    joints:
+      []
